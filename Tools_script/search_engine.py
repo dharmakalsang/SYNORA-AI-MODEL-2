@@ -25,7 +25,7 @@ def load_google_config() -> tuple[str | None, str | None]:
     if CONFIG_PATH.exists():
         try:
             data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
-            api_key = api_key or data.get("AIzaSyAExp2FQ7AJrtoweW5EDjIHP8gq1weY4MU")
+            api_key = api_key or data.get("GOOGLE_API_KEY")
             cx = cx or data.get("GOOGLE_CX")
         except Exception:
             pass
@@ -35,7 +35,7 @@ def load_google_config() -> tuple[str | None, str | None]:
 
 def save_google_config(api_key: str, cx: str) -> None:
     """Save Google search API keys to a local config file."""
-    data = {"AIzaSyAExp2FQ7AJrtoweW5EDjIHP8gq1weY4MU": api_key, "GOOGLE_CX": cx}
+    data = {"GOOGLE_API_KEY": api_key, "GOOGLE_CX": cx}
     CONFIG_PATH.write_text(json.dumps(data, indent=2), encoding="utf-8")
 
 

@@ -1,8 +1,16 @@
-import cv2
 import sys
+
+try:
+    import cv2
+except ImportError:
+    cv2 = None
+
 
 def main():
     print("Starting camera...")
+    if cv2 is None:
+        print("Error: OpenCV is not installed. Install it with 'pip install opencv-python'.")
+        return
     
     # Initialize the camera (0 is usually the default webcam)
     cap = cv2.VideoCapture(0)

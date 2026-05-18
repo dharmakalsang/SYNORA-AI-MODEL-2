@@ -27,70 +27,10 @@ import Tools_script.voice_assistant as voice_assistant
 import Tools_script.file_control as file_control
 import Tools_script.todo_reminder as todo_reminder
 import Tools_script.atdef as atdef
+from Tools_script.auth import add_history, authenticate, create_account, ensure_accounts_file, get_history
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ACCOUNTS_PATH = os.path.join(BASE_DIR, "accounts.json")
-DEFAULT_ACCOUNTS = {
-    "users": {
-        "dhrmakalsang@gmail.com": {
-            "password": "kalsangong1234",
-            "history": [
-                "Default account created.",
-                "This account has its own history stored locally."
-            ]
-        }
-    }
-}
-
-
-def ensure_accounts_file() -> None:
-    if not os.path.exists(ACCOUNTS_PATH):
-        with open(ACCOUNTS_PATH, "w", encoding="utf-8") as f:
-            json.dump(DEFAULT_ACCOUNTS, f, indent=2)
-
-
-def load_accounts() -> dict:
-    with open(ACCOUNTS_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-
-def save_accounts(accounts: dict) -> None:
-    with open(ACCOUNTS_PATH, "w", encoding="utf-8") as f:
-        json.dump(accounts, f, indent=2)
-
-
-def authenticate(email: str, password: str) -> bool:
-    accounts = load_accounts()
-    user = accounts.get("users", {}).get(email)
-    return bool(user and user.get("password") == password)
-
-
-def create_account(email: str, password: str) -> bool:
-    accounts = load_accounts()
-    if email in accounts.get("users", {}):
-        return False
-    accounts.setdefault("users", {})[email] = {
-        "password": password,
-        "history": ["Account created."]
-    }
-    save_accounts(accounts)
-    return True
-
-
-def add_history(email: str, text: str) -> None:
-    accounts = load_accounts()
-    user = accounts.get("users", {}).get(email)
-    if not user:
-        return
-    user.setdefault("history", []).append(text)
-    save_accounts(accounts)
-
-
-def get_history(email: str) -> list:
-    accounts = load_accounts()
-    user = accounts.get("users", {}).get(email)
-    return user.get("history", []) if user else []
 
 
 def login_menu() -> str:
@@ -138,6 +78,7 @@ def main_menu() -> str:
     print("5. Execute custom command")
     print("6. Show history")
     print("7. Exit")
+    print("atdef")
     print("=" * 30)
     return input("Choose an option (1-7): ").strip()
 

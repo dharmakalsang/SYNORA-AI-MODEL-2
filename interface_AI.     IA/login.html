@@ -3,99 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Login / Register System</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #1e1e24;
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .login-card {
-            background: #2a2a35;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            width: 320px;
-        }
-        h2 { text-align: center; margin-bottom: 24px; color: #00adb5; }
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-size: 14px; }
-        input {
-            width: 100%;
-            padding: 10px;
-            background: #3b3b4f;
-            border: 1px solid #444;
-            border-radius: 4px;
-            color: #fff;
-            box-sizing: border-box;
-        }
-        input:focus { border-color: #00adb5; outline: none; }
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #00adb5;
-            border: none;
-            border-radius: 4px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        button:hover { background: #008c9e; }
-        #message { margin-top: 15px; text-align: center; font-weight: bold; }
-    </style>
+    <title>Synora AI Login</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="page-shell">
+        <div class="auth-card">
+            <div class="brand-bar">
+                <div>
+                    <div class="brand-title">SYNORA AI</div>
+                    <div class="brand-subtitle">Secure access to your assistant</div>
+                </div>
+            </div>
 
-<div class="login-card">
-    <h2>Access System</h2>
-    <form id="loginForm">
-        <div class="input-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required>
-        </div>
-        <div class="input-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <button type="submit">Submit</button>
-    </form>
-    <div id="message"></div>
-</div>
+            <div class="tabs">
+                <button class="tab-button active" data-target="login-panel">Sign In</button>
+                <button class="tab-button" data-target="register-panel">Register</button>
+            </div>
 
-<script>
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault(); // Stop standard form redirect
-        
-        const formData = new FormData(e.target);
+            <div class="panel active" id="login-panel">
+                <h2>Welcome Back</h2>
+                <p>Login to access your Synora dashboard.</p>
+                <form id="loginForm">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="you@example.com" required>
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Enter your password" required>
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+
+            <div class="panel" id="register-panel">
+                <h2>Create Account</h2>
+                <p>Use an existing account or create a new one.</p>
+                <form id="registerForm">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="you@example.com" required>
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Choose a password" required>
+                    <label>Confirm Password</label>
+                    <input type="password" name="confirm" placeholder="Repeat password" required>
+                    <button type="submit">Register</button>
+                </form>
+            </div>
+
+            <div id="message" class="message"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const tabs = document.querySelectorAll('.tab-button');
+        const panels = document.querySelectorAll('.panel');
         const messageDiv = document.getElementById('message');
-        
-        try {
-            // Send data to the Flask backend route /login
-            const response = await fetch('/login', {
-                method: 'POST',
-                body: formData
-            });
-            
-            const result = await response.json();
-            messageDiv.innerText = result.message;
-            
-            if (response.ok) {
-                messageDiv.style.color = '#4e9f3d'; // Green for success
-            } else {
-                messageDiv.style.color = '#d9534f'; // Red for error
-            }
-        } catch (error) {
-            messageDiv.innerText = "Error connecting to server.";
-            messageDiv.style.color = '#d9534f';
-        }
-    });
-</script>
 
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                panels.forEach(panel => panel.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.target).classList.add('active');
+                messageDiv.textContent = '';
+            });
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const response = await fetch('/authenticate', { method: 'POST', body: formData });
+            const result = await response.json();
+            messageDiv.textContent = result.message;
+            messageDiv.className = result.success ? 'message success' : 'message error';
+
+            if (response.ok && result.email) {
+                window.location.href = `/dashboard?email=${encodeURIComponent(result.email)}`;
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const response = await fetch('/register', { method: 'POST', body: formData });
+            const result = await response.json();
+            messageDiv.textContent = result.message;
+            messageDiv.className = result.success ? 'message success' : 'message error';
+        });
+    </script>
 </body>
 </html>

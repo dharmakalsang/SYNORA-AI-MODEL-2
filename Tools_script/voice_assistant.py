@@ -12,7 +12,7 @@ try:
 except ImportError:
     pyttsx3 = None
 
-from sound import play_sound_file
+from Tools_script.sound import play_sound_file
 import Tools_script.synora_comm as synora_comm
 
 

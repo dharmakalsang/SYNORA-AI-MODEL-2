@@ -6,3 +6,4 @@ playwright
 pygame
 speech-recognition
 pyttsx3
+Flask

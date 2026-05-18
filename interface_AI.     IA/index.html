@@ -1,16 +1,113 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>INTERFACE DASHBOARD SYNORA AI VERSION 0.2</title>
-        
-    </head>
-    <body>
-        <h1></h1>
-        
-    </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synora AI Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard-shell">
+        <aside class="dashboard-sidebar">
+            <div class="logo-block">
+                <h1>SYNORA</h1>
+                <p>AI Control Center</p>
+            </div>
+            <nav>
+                <a href="#overview">Overview</a>
+                <a href="#history">Activity</a>
+                <a href="#features">Features</a>
+                <a href="/login">Logout</a>
+            </nav>
+        </aside>
 
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <div>
+                    <p class="welcome-label">Welcome back,</p>
+                    <h2 id="userEmail">Guest</h2>
+                </div>
+                <div class="header-actions">
+                    <button onclick="window.location.href='/login'">Sign Out</button>
+                </div>
+            </header>
 
-    <footer>
-        <p>&copy; 2023 SYNORA AI. All rights reserved.</p>
+            <section class="dashboard-hero" id="overview">
+                <div>
+                    <p class="eyebrow">Synora AI Dashboard</p>
+                    <h1>Smarter assistant control in one place</h1>
+                    <p>Access your account history, launch AI chat, open sites, and manage tools from a modern interface.</p>
+                </div>
+                <div class="hero-card">
+                    <strong>Live status:</strong>
+                    <span id="statusTag">Connected</span>
+                </div>
+            </section>
+
+            <section class="cards-grid" id="features">
+                <article>
+                    <h3>AI Chat</h3>
+                    <p>Send questions to Synora and use Google fallback automatically.</p>
+                </article>
+                <article>
+                    <h3>Camera Tool</h3>
+                    <p>Launch your camera module directly from the Python system.</p>
+                </article>
+                <article>
+                    <h3>History</h3>
+                    <p>Review your saved activity from past sessions.</p>
+                </article>
+                <article>
+                    <h3>Fast Actions</h3>
+                    <p>Open a browser, send commands, or run AI tasks.</p>
+                </article>
+            </section>
+
+            <section class="activity-section" id="history">
+                <div class="section-header">
+                    <h2>Activity History</h2>
+                    <p>Recent events stored for your account.</p>
+                </div>
+                <div class="activity-list" id="historyList">
+                    <p class="empty-state">Loading history...</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="dashboard-footer">
+        <p>&copy; 2026 SYNORA AI. All rights reserved.</p>
     </footer>
+
+    <script src="script.js"></script>
+    <script>
+        const email = getQueryParam('email');
+        const userEmailEl = document.getElementById('userEmail');
+        const historyList = document.getElementById('historyList');
+
+        if (!email) {
+            window.location.href = '/login';
+        } else {
+            userEmailEl.textContent = email;
+            fetch(`/history?email=${encodeURIComponent(email)}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    historyList.innerHTML = '';
+                    if (!data.success || data.history.length === 0) {
+                        historyList.innerHTML = '<p class="empty-state">No activity yet.</p>';
+                        return;
+                    }
+                    data.history.slice().reverse().forEach((item, index) => {
+                        const entry = document.createElement('div');
+                        entry.className = 'history-item';
+                        entry.innerHTML = `<span>${data.history.length - index}</span><p>${item}</p>`;
+                        historyList.appendChild(entry);
+                    });
+                })
+                .catch(() => {
+                    historyList.innerHTML = '<p class="empty-state">Unable to load history.</p>';
+                });
+        }
+    </script>
+</body>
 </html>
