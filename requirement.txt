@@ -1,0 +1,8 @@
+requests
+python-telegram-bot
+discord.py
+pywhatkit
+playwright
+pygame
+speech-recognition
+pyttsx3

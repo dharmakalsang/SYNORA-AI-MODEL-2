@@ -1,0 +1,25 @@
+{
+  "users": {
+    "dhrmakalsang@gmail.com": {
+      "password": "kalsangong1234",
+      "history": [
+        "Default account created.",
+        "This account has its own history stored locally."
+      ]
+    },
+    "bodhidharma": {
+      "password": "kalsang",
+      "history": [
+        "Account created.",
+        "Message command: tell kalsang to say hello to bodhi",
+        "Opened URL: youtube.com"
+      ]
+    },
+    "kalsang": {
+      "password": "kalsang",
+      "history": [
+        "Account created."
+      ]
+    }
+  }
+}

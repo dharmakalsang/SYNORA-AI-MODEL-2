@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Login / Register System</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1e1e24;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-card {
+            background: #2a2a35;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            width: 320px;
+        }
+        h2 { text-align: center; margin-bottom: 24px; color: #00adb5; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; }
+        input {
+            width: 100%;
+            padding: 10px;
+            background: #3b3b4f;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #fff;
+            box-sizing: border-box;
+        }
+        input:focus { border-color: #00adb5; outline: none; }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #00adb5;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover { background: #008c9e; }
+        #message { margin-top: 15px; text-align: center; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <h2>Access System</h2>
+    <form id="loginForm">
+        <div class="input-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="message"></div>
+</div>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault(); // Stop standard form redirect
+        
+        const formData = new FormData(e.target);
+        const messageDiv = document.getElementById('message');
+        
+        try {
+            // Send data to the Flask backend route /login
+            const response = await fetch('/login', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            messageDiv.innerText = result.message;
+            
+            if (response.ok) {
+                messageDiv.style.color = '#4e9f3d'; // Green for success
+            } else {
+                messageDiv.style.color = '#d9534f'; // Red for error
+            }
+        } catch (error) {
+            messageDiv.innerText = "Error connecting to server.";
+            messageDiv.style.color = '#d9534f';
+        }
+    });
+</script>
+
+</body>
+</html>
